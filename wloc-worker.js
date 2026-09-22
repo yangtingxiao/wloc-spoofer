@@ -99,6 +99,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <button class="btn btn-primary" id="saveBtn" onclick="save()">储存到设备</button>
       <button class="btn btn-secondary" onclick="addFav()">收藏位置</button>
       <button class="btn btn-secondary" onclick="locateMe()">当前位置</button>
+      <button class="btn btn-secondary" onclick="openSettings()">打开设置</button>
     </div>
   </div>
   <div class="card">
@@ -341,6 +342,10 @@ function locateMe() {
     err => toast('\\u5b9a\\u4f4d\\u5931\\u8d25: ' + err.message, 3000),
     { enableHighAccuracy:true, timeout:10000 }
   );
+}
+
+function openSettings() {
+  window.location.href = 'prefs:root=Privacy&path=LOCATION';
 }
 
 function parseMapUrl(text) {
