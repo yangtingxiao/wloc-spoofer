@@ -355,8 +355,8 @@ function locateMe() {
 }
 
 function openSettings() {
-  const target = encodeURIComponent('prefs:root=Privacy&path=LOCATION');
-  window.location.href = 'shortcuts://run-shortcut?input=' + target + '&action=open-url';
+  const shortcutName = encodeURIComponent('openlocation');
+  window.location.href = 'shortcuts://run-shortcut?name=' + shortcutName;
 }
 
 function parseMapUrl(text) {
