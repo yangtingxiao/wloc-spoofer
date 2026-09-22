@@ -347,7 +347,8 @@ function locateMe() {
 }
 
 function openSettings() {
-  window.location.href = 'settings-navigation://com.apple.Settings.PrivacyAndSecurity/LOCATION';
+  const target = encodeURIComponent('prefs:root=Privacy&path=LOCATION');
+  window.location.href = 'shortcuts://run-shortcut?input=' + target + '&action=open-url';
 }
 
 function parseMapUrl(text) {
