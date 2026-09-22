@@ -39,6 +39,8 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .coords { font-family:"SF Mono",monospace; font-size:14px; color:#333; padding:8px 12px; background:var(--bg); border-radius:8px; word-break:break-all; }
 .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:10px; font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; }
+.main-actions { gap:6px; flex-wrap:nowrap; }
+.main-actions .btn { min-width:0; padding:12px 6px; font-size:13px; white-space:nowrap; }
 .btn-primary { background:var(--blue); color:#fff; }
 .btn-primary:active { background:#005bb5; transform:scale(.97); }
 .btn-secondary { background:#e5e5ea; color:#333; }
@@ -95,7 +97,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   <div class="card">
     <h3>选择目标位置</h3>
     <div class="coords" id="coords">点击地图或使用下方工具选择位置</div>
-    <div class="row">
+    <div class="row main-actions">
       <button class="btn btn-primary" id="saveBtn" onclick="save()">储存到设备</button>
       <button class="btn btn-secondary" onclick="addFav()">收藏位置</button>
       <button class="btn btn-secondary" onclick="locateMe()">当前位置</button>
@@ -345,7 +347,7 @@ function locateMe() {
 }
 
 function openSettings() {
-  window.location.href = 'prefs:root=Privacy&path=LOCATION';
+  window.location.href = 'settings-navigation://com.apple.Settings.PrivacyAndSecurity/LOCATION';
 }
 
 function parseMapUrl(text) {
