@@ -90,7 +90,7 @@ button { -webkit-tap-highlight-color:transparent; }
 .btn.success { background:var(--green); }
 .btn-sm { flex:none; padding:7px 10px; border-radius:8px; font-size:11px; }
 .primary-action { width:100%; margin-top:10px; min-height:48px; font-size:16px; }
-.tool-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:9px; }
+.tool-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:9px; }
 .tool-tab { min-width:0; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 7px; border:1px solid rgba(100,116,139,.14); border-radius:10px; background:rgba(255,255,255,.56); color:#394658; font-size:12px; font-weight:650; cursor:pointer; }
 .tool-tab svg { width:16px; height:16px; }
 .tool-tab.active { color:var(--blue); background:rgba(235,243,255,.8); border-color:rgba(10,102,255,.2); }
@@ -143,7 +143,7 @@ button { -webkit-tap-highlight-color:transparent; }
   .bottom-sheet { left:8px; right:8px; padding-left:13px; padding-right:13px; border-radius:20px; }
   .altitude-block { grid-template-columns:1.2fr 1fr; gap:6px; }
   .field input { padding:0 7px; font-size:12px; }
-  .tool-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .tool-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .tool-tab { font-size:11px; }
 }
 @media(max-width:719px) and (max-height:500px) {
