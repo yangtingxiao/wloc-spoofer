@@ -232,6 +232,10 @@ button { -webkit-tap-highlight-color:transparent; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="m19.4 15 .1.1a2 2 0 0 1-2.8 2.8l-.1-.1a2 2 0 0 0-3.4 1.4V19a2 2 0 0 1-4 0v-.1a2 2 0 0 0-3.4-1.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A2 2 0 0 0 3.6 11H3.5a2 2 0 0 1 0-4h.1A2 2 0 0 0 5 3.6l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A2 2 0 0 0 11.2 2h.1a2 2 0 0 1 4 0v.1a2 2 0 0 0 3.4 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A2 2 0 0 0 20.4 7h.1a2 2 0 0 1 0 4h-.1a2 2 0 0 0-1 4Z"></path></svg>
         打开设置
       </button>
+      <button class="tool-tab" data-panel="map-key" onclick="toggleToolPanel('map-key')" aria-label="维护 CARTO 地图 Key" title="维护 CARTO 地图 Key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"></circle><path d="m11 12 9-9M17 6l2 2M14 9l2 2"></path></svg>
+        地图 Key
+      </button>
     </nav>
 
     <section class="tool-panel" id="toolPanel-favorites">
@@ -263,6 +267,18 @@ button { -webkit-tap-highlight-color:transparent; }
       </div>
     </section>
 
+    <section class="tool-panel" id="toolPanel-map-key">
+      <div class="panel-title"><h3>CARTO 地图 Key</h3></div>
+      <div class="input-row">
+        <input id="cartoKeyInput" type="password" autocomplete="off" placeholder="输入 CARTO Basemaps API Key" />
+        <button class="btn btn-secondary" onclick="saveCartoKey()">保存</button>
+      </div>
+      <div class="row">
+        <button class="btn btn-sm btn-danger" onclick="clearCartoKey()">清除 Key</button>
+      </div>
+      <div class="support-note">Key 仅保存在当前浏览器本地；可从 carto.com/basemaps/apikey 获取。</div>
+    </section>
+
     <div class="status" id="status"></div>
   </main>
 </div>
@@ -286,6 +302,7 @@ const GEO_API = location.origin + '/api/geo';
 const PARSE_API = location.origin + '/api/parse';
 const SEARCH_API = location.origin + '/api/search';
 const FAV_KEY = 'wloc_favorites';
+const CARTO_KEY_STORAGE = 'wloc_carto_basemap_key';
 let lat = 22.544577, lon = 113.94114;
 let selected = false;
 let activeLon = null, activeLat = null;
@@ -296,10 +313,24 @@ let activeQueryToken = 0;
 let parseRequestToken = 0;
 let searchRequestToken = 0;
 
+function getCartoKey() {
+  try { return localStorage.getItem(CARTO_KEY_STORAGE) || ''; } catch(e) { return ''; }
+}
+
+function createCartoVoyagerLayer() {
+  const key = getCartoKey();
+  const query = key ? '?key=' + encodeURIComponent(key) : '';
+  return L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' + query, {
+    maxZoom:19,
+    noWrap:true,
+    attribution:'&copy; OpenStreetMap contributors, &copy; CARTO'
+  });
+}
+
 const map = L.map('map', {zoomControl:false, worldCopyJump:true, maxBounds:[[-90,-180],[90,180]], maxBoundsViscosity:1.0}).setView([lat, lon], 13);
 const tiles = {
   satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, noWrap:true, attribution:'ArcGIS'}),
-  voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {maxZoom:19, noWrap:true, attribution:'\\u00a9 Carto'})
+  voyager: createCartoVoyagerLayer()
 };
 const pinIcon = L.divIcon({
   className: 'wloc-pin',
@@ -369,6 +400,37 @@ function switchLayer(name) {
   }
   currentLayerName = name;
   document.querySelectorAll('.layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer === name));
+}
+
+function reloadCartoLayer() {
+  const oldLayer = tiles.voyager;
+  const wasActive = currentLayer === oldLayer;
+  if (wasActive) map.removeLayer(oldLayer);
+  tiles.voyager = createCartoVoyagerLayer();
+  if (wasActive) {
+    currentLayer = tiles.voyager;
+    currentLayer.addTo(map);
+  }
+}
+
+function saveCartoKey() {
+  const input = document.getElementById('cartoKeyInput');
+  const key = input ? input.value.trim() : '';
+  try {
+    if (key) localStorage.setItem(CARTO_KEY_STORAGE, key);
+    else localStorage.removeItem(CARTO_KEY_STORAGE);
+  } catch(e) {
+    toast('无法保存 Key，请检查浏览器存储权限', 3500);
+    return;
+  }
+  reloadCartoLayer();
+  toast(key ? 'CARTO Key 已保存' : 'CARTO Key 已清除');
+}
+
+function clearCartoKey() {
+  const input = document.getElementById('cartoKeyInput');
+  if (input) input.value = '';
+  saveCartoKey();
 }
 
 marker.on('dragend', e => { const p=e.target.getLatLng(); setPos(p.lat, p.lng); });
@@ -952,6 +1014,8 @@ function syncSheetHeight() {
 }
 if (window.ResizeObserver) new ResizeObserver(syncSheetHeight).observe(bottomSheet);
 window.addEventListener('resize', () => setSheetExpanded(sheetExpanded));
+const cartoKeyInput = document.getElementById('cartoKeyInput');
+if (cartoKeyInput) cartoKeyInput.value = getCartoKey();
 setSheetExpanded(true);
 if (amapMap) switchLayer('amap');
 else switchLayer('satellite');
