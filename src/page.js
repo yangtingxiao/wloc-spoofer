@@ -1019,6 +1019,7 @@ if (cartoKeyInput) cartoKeyInput.value = getCartoKey();
 setSheetExpanded(true);
 if (amapMap) switchLayer('amap');
 else switchLayer('satellite');
+setTimeout(() => locateMe(), 250);
 
 renderFavs();
 queryActive();
