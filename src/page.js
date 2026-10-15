@@ -1,4 +1,5 @@
 import { getClientCoordinateHelpersSource } from "./coordinates.js";
+import { parseDmsCoordinates } from "./dms.js";
 
 export function getPageHtml(options = {}) {
   const amapJsKey = String(options.amapJsKey || "");
@@ -252,7 +253,7 @@ button { -webkit-tap-highlight-color:transparent; }
         <input id="urlInput" placeholder="粘贴地图链接或经纬度" />
         <button class="btn btn-secondary" onclick="parseUrl()">解析</button>
       </div>
-      <div class="support-note">支持 Apple Maps · Google Maps · 高德 · 百度 · 坐标文本</div>
+      <div class="support-note">支持地图链接、十进制及度分秒坐标；无方向标记的度分秒按经度、纬度排列。</div>
     </section>
 
     <section class="tool-panel" id="toolPanel-active">
@@ -297,6 +298,7 @@ button { -webkit-tap-highlight-color:transparent; }
 </div>
 <script>
 ${getClientCoordinateHelpersSource()}
+const parseDmsCoordinates = ${parseDmsCoordinates.toString()};
 const SAVE_API = 'https://gs-loc.apple.com/wloc-settings/save';
 const GEO_API = location.origin + '/api/geo';
 const PARSE_API = location.origin + '/api/parse';
@@ -755,6 +757,8 @@ function openSettings() {
 }
 
 function parseMapUrl(text) {
+  const dms = parseDmsCoordinates(text);
+  if (dms) return dms;
   let m;
   const coordinateSystem = inferCoordinateSystem(text);
   m = text.match(/ll=([0-9.-]+),([0-9.-]+)/);

@@ -6,6 +6,7 @@ import {
   coordinateSystemForSource,
   inferCoordinateSource,
 } from "./coordinates.js";
+import { parseDmsCoordinates } from "./dms.js";
 
 export { gcj02ToWgs84, wgs84ToGcj02 } from "./coordinates.js";
 
@@ -27,6 +28,8 @@ export function safeDecode(s) {
 export function extractFromString(s) {
   if (!s) return null;
   const str = String(s);
+  const dms = parseDmsCoordinates(str);
+  if (dms) return { ...dms, name: "", src: "text" };
   const inferredSource = inferCoordinateSource(str);
   const makePoint = (lat, lon, name = "", source = inferredSource) => {
     lat = Number(lat);
