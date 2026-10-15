@@ -61,8 +61,8 @@ app.get("/api/search", async (c) => {
     if (!keywords) return c.json({ error: "缺少搜索关键词" }, 400);
     if (keywords.length > 80) return c.json({ error: "搜索关键词过长" }, 400);
 
-    const key = c.env?.AMAP_KEY;
-    if (!key) return c.json({ error: "服务端未配置 AMAP_KEY" }, 503);
+    const key = (c.req.header("X-AMap-Key") || "").trim() || c.env?.AMAP_KEY;
+    if (!key) return c.json({ error: "请在地图 Key 中配置高德搜索 Key，或在服务端配置 AMAP_KEY" }, 503);
 
     const params = new URLSearchParams({
       key,
