@@ -253,7 +253,7 @@ button { -webkit-tap-highlight-color:transparent; }
         <input id="urlInput" placeholder="粘贴地图链接或经纬度" />
         <button class="btn btn-secondary" onclick="parseUrl()">解析</button>
       </div>
-      <div class="support-note">支持地图链接、十进制及度分秒坐标；无方向标记的度分秒按经度、纬度排列。</div>
+      <div class="support-note">支持 Apple Maps · Google Maps · 高德 · 百度 · 坐标文本</div>
     </section>
 
     <section class="tool-panel" id="toolPanel-active">
